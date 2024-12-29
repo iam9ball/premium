@@ -24,7 +24,7 @@ export default function CurrencySelect({
     value,
     onChange,
   }: CountrySelectProps) {
-  const { getAllCurrency, isLoading, error } = useCurrency();
+  const { formattedCurrency, isLoading, error } = useCurrency();
   // const [selectedCurrency, setSelectedCurrency] = useState<CurrencySelectValue | null>(null);
 //  const {selectedCurrency, setSelectedCurrency} = useSelectedCurrency()
 
@@ -39,7 +39,7 @@ export default function CurrencySelect({
         placeholder="Currency"
         isClearable
         isLoading={isLoading}
-        options={getAllCurrency()}
+        options={formattedCurrency}
         value={value}
         onChange={onChange}
         formatOptionLabel={(option) => (

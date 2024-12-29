@@ -18,6 +18,26 @@ export default function UserMenu() {
   const toggleOpen = useCallback(() => {
     setIsOpen((isOpen) => !isOpen);
   }, []);
+  const handleMyListings = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+  const handleMyAuctions = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+  const handleMyOffers = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+  const handleCreateListings = useCallback(() => {
+    setIsOpen(false);
+    createListingModal.onOpen()
+  }, []);
+  const handleCreateNFT = useCallback(() => {
+    setIsOpen(false);
+    createNftModal.onOpen()
+  }, []);
+  const handleCreateAuctions = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
    
   return (
@@ -40,29 +60,29 @@ export default function UserMenu() {
            <AiOutlineMenu size={25}/>
           </div> 
       </div>
-        <div className="absolute rounded-md z-50 shadow-md w-1/4 sm:w-1/5 md:w-[18%] bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40  border-gray-100 overflow-hidden right-0 top-16 text-xs sm:text-sm md:text-base">
+        <div className="absolute rounded-md z-50 shadow-md w-1/3 sm:w-1/5 md:w-[18%] bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40  border-gray-100 overflow-hidden right-0 top-16 text-xs sm:text-sm md:text-base">
           <div className="flex flex-col cursor-pointer">
          {isOpen && (
             <>  
-                <MenuItem onClick={() => {}} label="My Listings" />
+                <MenuItem onClick={handleMyListings} label="My Listings" />
                  <hr />
 
-                <MenuItem onClick={() => {}} label="My Auctions" />
+                <MenuItem onClick={handleMyAuctions} label="My Auctions" />
                  <hr />
 
-                <MenuItem onClick={() => {}} label="My Offers" />
+                <MenuItem onClick={handleMyOffers} label="My Offers" />
                  <hr />
 
-                <MenuItem onClick={createListingModal.onOpen} label="Create Listing" />
+                <MenuItem onClick={handleCreateListings} label="Create Listing" />
                  <hr />
 
-                <MenuItem onClick={() => {}} label="Create Auction" />
+                <MenuItem onClick={handleCreateAuctions} label="Create Auction" />
                 <hr />
 
-                 <MenuItem onClick={createNftModal.onOpen} label="Create NFT" />
+                 <MenuItem onClick={handleCreateNFT} label="Create NFT" />
                  <hr/>
-                 <div className="lg:hidden p-2 flex items-center justify-center">
-                  <Button variant="connect" defaultConnectButton={true}/>
+                 <div className="lg:hidden p-1 flex items-center justify-center">
+                  <Button variant="connect" defaultConnectButton={true} primaryConnect />
 
                 </div>
               </>

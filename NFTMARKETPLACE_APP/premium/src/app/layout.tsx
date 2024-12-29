@@ -5,13 +5,11 @@ import { ThirdwebProvider } from "thirdweb/react";
 import Footer from "./components/Footer";
 import CreateNftModal from "./components/modal/CreateNftModal";
 import CreateListingModal from "./components/modal/CreateListingModal";
-import {
-  QueryClientProvider,
-} from '@tanstack/react-query';
-import { queryClient } from "./queryClient";
+
 import WalletToast from "./components/WalletToast";
 import Dialog from "./components/modal/Dialog";
 import BuyListingModal from "./components/modal/BuyListingModal";
+import MakeOfferModal from "./components/modal/MakeOfferModal";
 
 
 
@@ -37,13 +35,12 @@ export default function RootLayout({
       <body className={inter.className} >
          
         <ThirdwebProvider>
-          <QueryClientProvider client={queryClient}>
         {children}
-        </QueryClientProvider>
         <CreateNftModal/>
         <CreateListingModal/>
          <Dialog body="Who are you buying this art for? if yourself, 'Click yes'."/>
       <BuyListingModal/>
+      <MakeOfferModal/>
         <Footer/> 
             <WalletToast/>
 

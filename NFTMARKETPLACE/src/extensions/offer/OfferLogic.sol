@@ -17,6 +17,7 @@ import {RoyaltyPaymentsLogic} from "@thirdweb-dev/contracts/extension/upgradeabl
 
 
 contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
+    using SafeERC20 for IERC20;
        
 
        bytes32 private constant LISTER_ROLE = keccak256("LISTER_ROLE");
@@ -77,14 +78,14 @@ contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
      *
      *  @param _offerId The ID of the offer to cancel.
      */
-    function cancelOffer(uint256 _offerId, uint256 _listingId) external {
+    function cancelOffer(uint256 _offerId, uint256 _listingId) external payable{
          
         DirectListingsStorage.Data storage listingData = _getListingStorageData();
         OfferStorage.Data storage offerData = _getOfferStorageData();
         address sender = _msgSender();
         Offer memory offer = offerData.listingIdToOffer[_listingId][_offerId];
         int256 index = listingData.idToIndex[_listingId];
-
+        IDirectListings.Listing memory listing = listingData.listings[uint256(index)];
         if (_listingId <= 0 ||  _listingId > listingData.listingId) {
             revert __Offer_InvalidListingId();
         }
@@ -93,7 +94,9 @@ contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
             revert __Offer_UnauthorizedToCall();
         } 
         
+        
          emit CancelledOffer(sender, _offerId,  _listingId);
+         CurrencyTransferLib.transferCurrencyWithWrapper(listing.currency, address(this), offer.offeror, offer.totalPrice, nativeTokenWrapper);
         offerData.listingIdToOffer[_listingId][_offerId].status = Status.CANCELLED;
         // uint256 endTimeStamp = offer.expirationTimestamp;
 
@@ -158,7 +161,7 @@ contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
      }
 
 
-      function rejectOffer(uint256 _offerId, uint256 _listingId) external {
+      function rejectOffer(uint256 _offerId, uint256 _listingId) external payable {
          
         DirectListingsStorage.Data storage listingData = _getListingStorageData();
         OfferStorage.Data storage offerData = _getOfferStorageData();
@@ -176,6 +179,7 @@ contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
         } 
         
          emit RejectedOffer(lister, _offerId,  _listingId);
+         CurrencyTransferLib.transferCurrencyWithWrapper(listing.currency, address(this), offer.offeror, offer.totalPrice, nativeTokenWrapper);
         offerData.listingIdToOffer[_listingId][_offerId].status = Status.CANCELLED;
 
     }
@@ -185,15 +189,15 @@ contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
       function _validateERC20AllowanceAndBalanceOrNativeTokenAmount(address _currency, uint256 _tokenPrice, address _buyer) internal {
       if(_currency == NATIVE_TOKEN) {
         if(msg.value < _tokenPrice) {
-            revert __DirectListing_InsufficientFunds(_tokenPrice);
+            revert __Offer_InsufficientFunds(_tokenPrice);
         }
       }
         else {
-            if (IERC20(_currency).balanceOf(_buyer) < _tokenPrice 
-                             ||
-                IERC20(_currency).allowance(_buyer, address(this)) < _tokenPrice) {
-                   revert __DirectListing_InsufficientFunds(_tokenPrice);
-                }
+            if (IERC20(_currency).balanceOf(_buyer) < _tokenPrice) {
+                    revert __Offer_InsufficientFunds(_tokenPrice);
+            }
+                         
+                IERC20(_currency).safeTransferFrom(_buyer, address(this), _tokenPrice);   
         }
       
     }
@@ -210,7 +214,7 @@ contract OfferLogic is IOffer, ERC2771ContextConsumer, ReentrancyGuard {
         if(recipientLength > 0){
             for (uint256 i = 0;  i < recipientLength; ++i) {
                if (_amountRemaining < amounts[i]) {
-                revert __DirectListing_InsufficientFunds( _amountRemaining);
+                revert __Offer_InsufficientFunds( _amountRemaining);
                } 
         CurrencyTransferLib.transferCurrencyWithWrapper(_currency, _buyer, recipients[i], amounts[i], _nativeTokenWrapper);
          unchecked {

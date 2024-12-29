@@ -2,13 +2,14 @@
 import Image from "next/image"
 import premium from "@public/premium.jpeg"
 import {useWindowWidth} from "@react-hook/window-size";
+import { useMemo } from "react";
 
 export default function Logo() {
 
    const width = useWindowWidth();
 
 
-   const size = () => {
+   const size = useMemo(() => {
     if (width >= 1024) {
       return 44
     }
@@ -19,7 +20,7 @@ export default function Logo() {
       return 36
       }
     
-  }
+  }, [width])
 
   return (
     <div className="inline-flex items-center justify-center">
@@ -27,14 +28,12 @@ export default function Logo() {
         <Image 
           src={premium}
           alt="Premium logo"
-          height={size()}
-          width={size()}
+          height={size}
+          width={size}
           className="rounded-xl object-cover"
           priority
         />
-        <span className="pl-3 font-logo text-[14px] md:text-[20px] font-bold tracking-tighter ">
-          Prime
-        </span>
+       
       </div>
     </div>
   )

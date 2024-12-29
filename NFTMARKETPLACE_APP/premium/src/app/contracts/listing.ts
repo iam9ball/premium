@@ -8,7 +8,7 @@ import { anvil } from "thirdweb/chains";
 import {contractAddress} from "./constant"
 import { client } from "../client";
 import { Account } from "thirdweb/wallets";
-import { listingFee, listingInfo, listings } from "./platformInfo";
+import { listingFee, listingInfo, getListingType, getPlatformFee } from "./listingInfo";
 import { NATIVE_TOKEN } from "../utils/address";
 
 import { approve, isERC721 } from "thirdweb/extensions/erc721";
@@ -23,11 +23,7 @@ export enum ListingType {
     }
 
 
- 
-
    
-
-  
  export const createListing = async ({assetAddress, assetId, currencyAddress, assetPrice, listingPlan, reserved}:{
   assetAddress: string,
   assetId: bigint,
@@ -133,7 +129,7 @@ return {
   }
   
   else {
-    message = "An unexpected erorr occured: Try again"
+    message = "An unexpected error occured: Try again"
   }
 
   return {
@@ -143,8 +139,9 @@ return {
 
 }
 
-
 }
+
+
 
 
 export const buyListing = async (recipientAddress: string , listingId: bigint, account: Account) => {
@@ -199,6 +196,56 @@ return {
   if (error?.message.includes('__DirectListing_InsufficientFunds')){
     message = "Error purchasing listing: Make sure you are sending enough funds"
   }
+  else {
+    message = "An unexpected error occured: Try again"
+  }
+
+  return {
+    success: false,
+    message: message 
+  }
+
+}
+}
+
+
+export const updateListing = async (listingId: bigint,  currency: string,  pricePerToken: bigint,  account: Account) => {
+
+  const transaction = prepareContractCall({
+  contract,
+  method: "updateListing",
+  params: [listingId, {currency, pricePerToken}],
+  
+});
+
+
+try {
+
+const { transactionHash } = await sendTransaction({
+  account,
+  transaction,
+}); 
+console.log(transactionHash)
+
+return {
+  success: true,
+  message: "Listing updated successfully"
+  }
+} catch (error: any) {
+   let message;
+  if (error?.message.includes('__DirectListing_NotAuthorizedToUpdate')) {
+   message = "You are not authorized to update this listing"  
+  }
+   
+   if (error?.message.includes('__DirectListing_InvalidId')){
+    message = "Error: Invalid listing"
+  }
+  if (error?.message.includes('__DirectListing_InvalidListingCurrency')){
+    message = "Error: Invalid currency"
+  }
+  else {
+    message = "An unexpected error occured: Try again"
+  }
 
   return {
     success: false,
@@ -207,6 +254,235 @@ return {
 
 }
 
+}
+
+
+
+
+export const updateListingPlan = async (listingId: bigint,  listingPlan:ListingType,  account: Account) => {
+
+  
+   
+
+    const listing = await readContract({
+     contract,
+     method:"getListing",
+      params: [listingId]
+    })
+
+    
+    let fee: bigint | undefined ;
+
+  if (listing.currency == NATIVE_TOKEN){
+
+
+    const data = await readContract({
+     contract,
+     method:"getListingType",
+      params: [listingPlan]
+    })
+   
+     fee = await readContract({
+     contract,
+     method:"getPlatformFee",
+      params: [listing.currency, data[1]]
+    })
+     
+   }
+   else {
+    fee = undefined;
+   }
+
+
+  const transaction = prepareContractCall({
+  contract,
+  method: "updateListingPlan",
+  params: [listingId, listingPlan],
+  value: fee
+  
+});
+
+
+try {
+
+const { transactionHash } = await sendTransaction({
+  account,
+  transaction,
+}); 
+console.log(transactionHash)
+
+return {
+  success: true,
+  message: "Listing Plan updated"
+  }
+} catch (error: any) {
+   let message;
+  if (error?.message.includes('__DirectListing_NotAuthorizedToUpdate')) {
+   message = "You are not authorized to update this listing"  
+  }
+   
+   if (error?.message.includes('__DirectListing_TransferFailed')){
+    message = "Error: Transfer failed"
+  }
+
+  else {
+    message = "An unexpected error occured: Try again"
+  }
+  
+
+  return {
+    success: false,
+    message: message 
+  }
+
+}
+
+}
+
+
+
+export const cancelListing = async (listingId: bigint, account: Account) => {
+
+  const transaction = prepareContractCall({
+  contract,
+  method: "cancelListing",
+  params: [listingId],
+  
+});
+
+
+try {
+
+const { transactionHash } = await sendTransaction({
+  account,
+  transaction,
+}); 
+console.log(transactionHash)
+
+return {
+  success: true,
+  message: "Listing cancelled"
+  }
+} catch (error: any) {
+   let message;
+  if (error?.message.includes('__DirectListing_NotAuthorizedToCancel')) {
+   message = "You are not authorized to cancel this listing"  
+  }
+   
+
+  else {
+    message = "An unexpected error occured: Try again"
+  }
+  
+
+  return {
+    success: false,
+    message: message 
+  }
+
+}
+
+}
+
+
+
+export const approveBuyerForListing = async (listingId: bigint, buyer: string, account: Account) => {
+
+  const transaction = prepareContractCall({
+  contract,
+  method: "approveBuyerForListing",
+  params: [listingId, buyer],
+  
+});
+
+
+try {
+
+const { transactionHash } = await sendTransaction({
+  account,
+  transaction,
+}); 
+console.log(transactionHash)
+
+return {
+  success: true,
+  message: "Buyer approved for listing"
+  }
+} catch (error: any) {
+   let message;
+  if (error?.message.includes('__DirectListing_NotAuthorizedToApproveBuyerForListing')) {
+   message = "You are not authorized to approve a buyer"  
+  }
+   
+  if (error?.message.includes('__DirectListing_InvalidAddress')) {
+   message = "Error: Invalid address"  
+  }
+  if (error?.message.includes('__DirectListing_CanOnlyApproveABuyer')) {
+   message = "Error: You can only approve a buyer "  
+  }
+   
+
+  else {
+    message = "An unexpected error occured: Try again"
+  }
+  
+
+  return {
+    success: false,
+    message: message 
+  }
+
+}
+
+}
+
+
+
+export const removeApprovedBuyerForListing = async (listingId: bigint, account: Account) => {
+
+  const transaction = prepareContractCall({
+  contract,
+  method: "removeApprovedBuyerForListing",
+  params: [listingId],
+  
+});
+
+
+try {
+
+const { transactionHash } = await sendTransaction({
+  account,
+  transaction,
+}); 
+console.log(transactionHash)
+
+return {
+  success: true,
+  message: "Buyer unapproved for listing"
+  }
+} catch (error: any) {
+   let message;
+  if (error?.message.includes('__DirectListing_NotAuthorizedToRemoveBuyerForListing')) {
+   message = "You are not authorized to unapprove a buyer"  
+  }
+   
+  
+  if (error?.message.includes('__DirectListing_CanOnlyRemoveApprovedBuyer')) {
+   message = "Error: You can only remove an approved buyer "  
+  }
+   
+
+  else {
+    message = "An unexpected error occured: Try again"
+  }
+  
+
+  return {
+    success: false,
+    message: message 
+  }
+
+}
 
 }
 

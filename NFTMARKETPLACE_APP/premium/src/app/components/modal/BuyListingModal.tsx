@@ -1,7 +1,7 @@
 'use client'
 
 import Heading from "../Heading";
-import {FieldValues, SubmitHandler, UseFormHandleSubmit, UseFormRegister, useForm } from "react-hook-form";
+import {FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Modal from "./Modal";
 import useBuyListingModal from "@/app/hooks/useBuyListingModal";
 import { useState } from "react";
@@ -13,17 +13,6 @@ import { showToast } from "../WalletToast";
 
 
 
-interface BuyListingModalProps {
- 
-  onSubmit: SubmitHandler<FieldValues>;
-  register:  UseFormRegister<{
-    recipientAddress: string;
-}>
-  handleSubmit: UseFormHandleSubmit<{
-    recipientAddress: string;
-}, undefined>,
-  disabled?: boolean
-}
 
 
  const BuyListingModal = () => {
@@ -44,6 +33,7 @@ interface BuyListingModalProps {
         toast.success(data.message!);
         buyListingModal.onClose();
         reset(); 
+        buyListingModal.mutateListings();
       }
       else {
         toast.error(data.message!);
@@ -67,7 +57,7 @@ interface BuyListingModalProps {
        
        
         <div className="flex flex-col gap-2">
-          <label htmlFor="address" className="block text-sm font-black text-black">Recipient Address</label>
+          <label htmlFor="assetAddress" className="block text-sm font-black text-black">Recipient Address</label>
           <input type="text" id="assetAddress" {...register("recipientAddress", {
              required: true,
           })} className="border border-gray-300 rounded-lg p-2 w-full pl-6 placeholder:text-sm" placeholder="0x123...789" />   

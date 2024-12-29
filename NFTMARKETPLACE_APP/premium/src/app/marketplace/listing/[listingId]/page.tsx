@@ -6,7 +6,7 @@
 // import { User } from "@prisma/client";
 // import getReservation from "@/app/actions/getReservation";
 
-import { fetchNFT, getListing } from "@/app/contracts/platformInfo";
+import { fetchNFT, getListing } from "@/app/contracts/listingInfo";
 import ListingDetails from "./ListingDetails";
 import { getContract } from "thirdweb";
 import { anvil } from "thirdweb/chains";
@@ -39,13 +39,16 @@ export default async function ListingPage({ params }: { params: IParams }) {
 
      
   return (
-   
-    <>
-    <Container>
-     <div className="h-[5vh]"></div>
-      <ListingDetails listingId={params.listingId}/>
      
-      </Container>
+     
+    <>
+    <div className="h-[5vh]"></div>
+     <section>
+      <Container>
+       <ListingDetails listingId={params.listingId}/>
+       </Container>
+     </section> 
+     
     </>
   );
 }

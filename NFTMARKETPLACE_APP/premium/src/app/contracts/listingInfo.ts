@@ -3,6 +3,8 @@ import { readContract } from 'thirdweb';
 import { ListingType } from './listing';
 
 
+
+
 export const listingInfo = async (params: ListingType) => {
   try {
     const data = await readContract({
@@ -84,7 +86,69 @@ export const getListing = async (listingId: bigint) => {
     throw error
   }
     
+}
+export const getAllValidListings = async () => {
+  try {
+      const data = await readContract({
+     contract,
+     method:"getAllValidListings",
+    })
 
+   return data;  
+  }
+  catch (error) {
+    console.error(error);
+    throw error
+  }
+    
+}
+export const getPlatformFee = async (currency: string, price: bigint) => {
+  try {
+      const data = await readContract({
+     contract,
+     method:"getPlatformFee",
+     params:[currency, price]
+    })
+
+   return data;  
+  }
+  catch (error) {
+    console.error(error);
+    throw error
+  }
+    
+}
+export const getListingType = async (params: ListingType) => {
+  try {
+      const data = await readContract({
+     contract,
+     method:"getListingType",
+     params:[params]
+    })
+
+   return data;  
+  }
+  catch (error) {
+    console.error(error);
+    throw error
+  }
+    
+}
+export const getApprovedBuyer = async (listingId: bigint) => {
+  try {
+      const data = await readContract({
+     contract,
+     method:"getApprovedBuyer",
+     params:[listingId]
+    })
+
+   return data;  
+  }
+  catch (error) {
+    console.error(error);
+    throw error
+  }
+    
 }
 
 export const fetchNFT = async (contract: any, listing: any) => {

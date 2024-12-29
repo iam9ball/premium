@@ -60,7 +60,7 @@ interface IOffer {
 
 
      error __Offer_InvalidListingId();
-     error __DirectListing_InsufficientFunds(uint256 amount);
+     error __Offer_InsufficientFunds(uint256 amount);
      error __Offer_UnauthorizedToCall();
      error __Offer_MarketPlaceUnapproved();
 
@@ -78,7 +78,7 @@ interface IOffer {
      *
      *  @param _offerId The ID of the offer to cancel.
      */
-    function cancelOffer(uint256 _offerId, uint256 _listingId) external;
+    function cancelOffer(uint256 _offerId, uint256 _listingId) external payable;
     /**
      *  @notice Accept an offer.
      *
@@ -86,7 +86,7 @@ interface IOffer {
      */
     function acceptOffer(uint256 _offerId,  uint256 _listingId) external payable;
 
-     function rejectOffer(uint256 _offerId, uint256 _listingId) external;
+     function rejectOffer(uint256 _offerId, uint256 _listingId) external payable;
 
     
 

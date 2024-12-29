@@ -13,7 +13,7 @@ export default  function Marketplace() {
     <>
    
      <div className="h-20"></div>
-     <section >
+     <section className="h-[90vh]">
       <CardContainer>
       <Listings/>
       </CardContainer>

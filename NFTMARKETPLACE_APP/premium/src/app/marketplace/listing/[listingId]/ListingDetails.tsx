@@ -6,12 +6,13 @@ import Image from 'next/image';
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import useDialog from '@/app/hooks/useDialog';
 import useBuyListingModal from '@/app/hooks/useBuyListingModal';
-import { fetchNFT, getListing } from '@/app/contracts/platformInfo';
+import { fetchNFT, getListing } from '@/app/contracts/listingInfo';
 import { getContract } from "thirdweb";
 import { anvil } from "thirdweb/chains";
 import { client } from "@/app/client";
 import useSWR from 'swr';
 import { NFT } from 'thirdweb/react';
+import useMakeOfferModal from '@/app/hooks/useMakeOfferModal';
 
 
 interface ListingDetailsProps {
@@ -24,6 +25,7 @@ export default function ListingDetails(
 
     const dialog = useDialog();
   const buyListingModal = useBuyListingModal();
+  const makeOfferModal = useMakeOfferModal();
 
 
    const fetchListing = useCallback(async () => {
@@ -53,11 +55,19 @@ export default function ListingDetails(
     data, 
     error,
     mutate,
+    isLoading
   } = useSWR('listings/' + listingId, fetchListing, {
     revalidateOnFocus: true,
-    revalidateOnReconnect: true
+    revalidateOnReconnect: true,
     });
 
+
+    useEffect(() => {
+     console.log("mutate")
+     buyListingModal.setMutateListings(mutate);
+
+    
+  }, [mutate]);
 
 const rotationStyle = useMemo(() => {
   const rotation = 132;
@@ -111,12 +121,13 @@ const rotationStyle = useMemo(() => {
    return time;
   }, [data?.endTimestamp, data?.startTimestamp])
 
+   const uri = useMemo(() => {
+    return ipfsToHttp(data?.nft.metadata.image!)
 
-  const onClick = () => {
-    dialog.onOpen();
-   
-  }
+  }, [data?.nft])
 
+
+  
 
    
 
@@ -125,18 +136,21 @@ const rotationStyle = useMemo(() => {
   if(error) {
     return <div>An error occured</div>
   }
-
-  if (!data) {
-    return <div>No listing found</div>
+  if (isLoading) {
+    return <div>Loading...</div>
   }
 
+  if (!data) {
+    return <div>Empty state</div>
+  }
+  
 
 
   return (
     
 
     <>
-    <div className="w-full aspect-[3/4] h-[80vh] cursor-pointer flex justify-evenly " onMouseEnter={handleMouseEnter}>
+    <div className="w-full h-[90vh] aspect-[3/4] h-[80vh] cursor-pointer flex justify-evenly " onMouseEnter={handleMouseEnter}>
       <div className="relative h-full w-[90%] group">
         {/* Background gradient animation */}
         <div
@@ -158,11 +172,9 @@ const rotationStyle = useMemo(() => {
         <div className="relative w-[40%] flex items-center h-[90%]">
           
             <Image 
-              src={
-                ipfsToHttp(data?.nft!.metadata.image!)
-              } 
+              src={uri} 
               alt={
-                data?.nft!.metadata.name!
+               data?.nft.metadata.name!
               } 
               fill
               style={{ objectFit: 'contain' }}
@@ -210,9 +222,9 @@ const rotationStyle = useMemo(() => {
                     </div>} 
                             <div className='flex mb-6'>
                               <Button  actionLabel="Make Offer" 
-                              classNames="bg-white text-[16px] px-5 py-3 sm:px-10 sm:py-4 rounded-lg " onClick={()=>{}}/>
+                              classNames="bg-white text-[16px] px-5 py-3 sm:px-10 sm:py-4 rounded-lg " onClick={makeOfferModal.onOpen}/>
                               <Button  actionLabel="Buy Listing"  
-                              classNames="bg-black text-[16px] text-white px-5 py-3 sm:px-10 sm:py-4 ml-8 rounded-lg" onClick={onClick}/>
+                              classNames="bg-black text-[16px] text-white px-5 py-3 sm:px-10 sm:py-4 ml-8 rounded-lg" onClick={ dialog.onOpen}/>
                             </div>
 
                             <div>

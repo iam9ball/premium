@@ -1,22 +1,24 @@
 'use client'
 
-import { ConnectButton } from "thirdweb/react";
+import { ConnectButton, useSwitchActiveWalletChain } from "thirdweb/react";
 import { client } from "../client";
 import { IconType } from "react-icons";
 import { createWallet } from "thirdweb/wallets";
 import styles from '../styles/ConnectButton.module.css';
-
-import {useWindowWidth} from "@react-hook/window-size";
-
+import { anvil, polygonAmoy } from "thirdweb/chains";
+import { useWindowWidth } from "@react-hook/window-size";
+import { useMemo } from "react";
 
 interface ButtonProps {
     actionLabel?: string;
-    onClick: () => void;   
+    onClick?: () => void;   
     disabled?: boolean;
     variant?: 'connect';
+    primaryConnect?: boolean;
     icon?: IconType;
     classNames?: string;
-    defaultConnectButton?: boolean
+    defaultConnectButton?: boolean;
+    
 }
 
 const wallets = [
@@ -26,112 +28,108 @@ const wallets = [
   createWallet("app.phantom"),
 ];
 
-
-
 export default function Button({
     actionLabel, 
     onClick, 
     disabled, 
     variant,
+    primaryConnect,
     icon: Icon,
     classNames,
     defaultConnectButton
 }: ButtonProps) {
   
-
-  // Responsivity for connect button
-
-   const width = useWindowWidth();
+  const width = useWindowWidth();
+  const switchChain = useSwitchActiveWalletChain();
   
-  const Width = () => {
+  const Width = useMemo(() => {
+    if( primaryConnect) {return "100%"}
     if (width >= 1024) {
-      return "160px"
+      return "160px";
+    } else if (width >= 768) {
+      return "144px";
+    } else {
+      return "112px";
     }
-    else if (width >= 768) {
-      return "144px"
-    }
-    else {
-      return "112px"
-    }
-    
-  }
+  }, [width]);
 
- const Height = () => {
-    if (width >= 768) {
-      return "48px"
-    }
+  const Height = useMemo(() => {
    
-      return "40px"
-  }
-
-  const FontSize = () => {
     if (width >= 768) {
-      return "14px"
+    if( primaryConnect) {return "100%"}
+      return "48px";
     }
-   
-      return "12px"
-  }
+    if( primaryConnect) {return "80%"}
+    return "40px";
+  }, [width]);
 
-  const defaultConnectStyle = () => {
-     if (defaultConnectButton == true) {
+  const FontSize = useMemo(() => {
+    if( primaryConnect) {return "10px"}
+    if (width >= 768) {
+      return "14px";
+    }
+    return "12px";
+  }, [width]);
+
+  const defaultConnectStyle = useMemo(() => {
+    if (defaultConnectButton === true) {
       return styles.defaultConnectButton;
-     }
-     return styles.connectButton;
-  }
+    }
+    return styles.connectButton;
+  }, [defaultConnectButton]);
 
+  const handleConnect = () => {
+    console.log("Connecting...");
+    switchChain(polygonAmoy)
+      .then(() => console.log("Switched to chain:", polygonAmoy))
+      .catch((error) => console.error("Failed to switch chain:", error));
+  };
 
-    return (
-     (variant == "connect") ? (
-
- <ConnectButton
+  return (
     
-      client={client}
-      wallets={wallets}
-      connectModal={{
-        size: "compact",
-        title: "Connect wallet",
-        showThirdwebBranding: false,
-      }}
-       connectButton={{
-        label: "Connect",
-        className:  (),
-
-    style: {
-     color: "white",
-      minWidth: "112px",
-      minHeight: "40px",
-      width: Width(),
-      height: Height(),
-      fontSize: FontSize(),
-      padding: "12px 24px",
-      fontWeight: "500",
-      
+    variant === "connect" ? (
+      <ConnectButton
+        client={client}
+        wallets={wallets}
+        connectModal={{
+          size: "compact",
+          title: "Connect wallet",
+          showThirdwebBranding: false,
+        }}
+        connectButton={{
+          label: "Connect",
+          className: primaryConnect? "" : defaultConnectStyle,
+          style: {
+            color: primaryConnect ? "black":"white",
+            minWidth: "96px",
+            minHeight: "40px",
+            width: Width,
+            height: Height,
+            fontSize: FontSize,
+            padding: primaryConnect? "10px 14px" : "12px 16px",
+            fontWeight: primaryConnect ? "900" : "500",
+          },
           
+        }}
+        detailsButton={{
+    style: {
+      width: primaryConnect ? "50%" : "100%",
+      borderRadius: `${primaryConnect && '0px'}`,
+      fontSize: `${primaryConnect  && "8px"}`,
+      padding: "1px 1px"
     },
   }}
-    /> ) : (  
-    <button
-    onClick={e => { e.stopPropagation(); onClick()}}
-    disabled={disabled}             
-      className={`relative disabled:opacity-70 disabled:cursor-not-allowed transition flex items-center justify-center cursor-pointer  text-center 
-      ${classNames}
-      `}
-    >
-      {Icon && (<Icon size={24} className="absolute left-4 top-3"/>)}
-      {actionLabel}
-    </button>
-     )
+        onConnect={handleConnect}
+      />
+    ) : (
+      <button
+        onClick={(e) => { e.stopPropagation(); onClick && onClick(); }}
+        disabled={disabled}
+        className={`relative disabled:opacity-70 disabled:cursor-not-allowed transition flex items-center justify-center cursor-pointer text-center ${classNames}`}
+      >
+        {Icon && (<Icon size={24} className="absolute left-4 top-3" />)}
+        {actionLabel}
+      </button>
     )
-    
-    
-    }
-
-  
-
-
-
-
-
-    
-  
-
+  );
+}

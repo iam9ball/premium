@@ -185,8 +185,7 @@ contract AuctionLogic is IAuction, ERC2771ContextConsumer,  ReentrancyGuard{
     });
     
      data.auctions[uint256(auctionIndex)] = _auction;
-
-        
+ 
      }
 
     function bidInAuction(uint256 auctionId, uint256 bidAmount) external  payable nonReentrant{
