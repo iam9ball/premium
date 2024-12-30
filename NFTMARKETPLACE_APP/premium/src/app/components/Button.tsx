@@ -59,12 +59,12 @@ export default function Button({
     if( primaryConnect) {return "100%"}
       return "48px";
     }
-    if( primaryConnect) {return "80%"}
+    if( primaryConnect) {return "100%"}
     return "40px";
   }, [width]);
 
   const FontSize = useMemo(() => {
-    if( primaryConnect) {return "10px"}
+    if( primaryConnect) {return "12px"}
     if (width >= 768) {
       return "14px";
     }
@@ -81,7 +81,7 @@ export default function Button({
   const handleConnect = () => {
     console.log("Connecting...");
     switchChain(polygonAmoy)
-      .then(() => console.log("Switched to chain:", polygonAmoy))
+      .then(() => onClick && onClick())
       .catch((error) => console.error("Failed to switch chain:", error));
   };
 
@@ -100,23 +100,25 @@ export default function Button({
           label: "Connect",
           className: primaryConnect? "" : defaultConnectStyle,
           style: {
-            color: primaryConnect ? "black":"white",
+            color:"white",
             minWidth: "96px",
             minHeight: "40px",
             width: Width,
             height: Height,
             fontSize: FontSize,
-            padding: primaryConnect? "10px 14px" : "12px 16px",
+            padding: "12px 16px",
             fontWeight: primaryConnect ? "900" : "500",
+            borderRadius: `${primaryConnect && '0px 0px 5px 5px'}`,
+            backgroundColor: primaryConnect ? "black": ""
           },
           
         }}
         detailsButton={{
+
     style: {
-      width: primaryConnect ? "50%" : "100%",
-      borderRadius: `${primaryConnect && '0px'}`,
-      fontSize: `${primaryConnect  && "8px"}`,
-      padding: "1px 1px"
+      width: Width,
+      borderRadius: `${primaryConnect && '0px 0px 5px 5px'}`,
+      maxWidth:  Width,
     },
   }}
         onConnect={handleConnect}

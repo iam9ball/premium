@@ -4,18 +4,21 @@ import { AiFillBell, AiOutlineMenu } from "react-icons/ai";
 import MenuItem from "./MenuItem";
 import Button from "../Button";
 import useCreateNftModal from "@/app/hooks/useCreateNftModal";
-import useCreateListingModal from "@/app/hooks/useCreateListingModal"
+import useCreateListingModal from "@/app/hooks/useCreateListingModal";
+import Notifications from "../Notifications"
 
 
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isNotificationOpen, setNotificationisOpen] = useState(false);
   const createNftModal = useCreateNftModal();
   const createListingModal = useCreateListingModal();
 
   
 
   const toggleOpen = useCallback(() => {
+    setNotificationisOpen(false);
     setIsOpen((isOpen) => !isOpen);
   }, []);
   const handleMyListings = useCallback(() => {
@@ -39,6 +42,11 @@ export default function UserMenu() {
     setIsOpen(false);
   }, []);
 
+  const toggleNotifications = useCallback(() => {
+    setIsOpen(false);
+    setNotificationisOpen((isNotificationOpen) => !isNotificationOpen);
+  }, []);
+
    
   return (
     <>
@@ -49,7 +57,7 @@ export default function UserMenu() {
           <Button variant="connect" defaultConnectButton={true}/>
         </div>
           <div className="cursor-pointer text-rose-500 relative">
-          <AiFillBell  size={25}/>
+          <AiFillBell  size={25} onClick={toggleNotifications}/>
           <span className=" absolute rounded-full h-1 w-1 top-[-2px] right-[-0.1px] text-rose-500 text-xs ">0</span>
           </div>
           
@@ -60,7 +68,7 @@ export default function UserMenu() {
            <AiOutlineMenu size={25}/>
           </div> 
       </div>
-        <div className="absolute rounded-md z-50 shadow-md w-1/3 sm:w-1/5 md:w-[18%] bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40  border-gray-100 overflow-hidden right-0 top-16 text-xs sm:text-sm md:text-base">
+        <div className="absolute rounded-md z-50 shadow-md w-3/7 sm:w-1/4 md:w-[18%] bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40  border-gray-100 overflow-hidden right-2 top-16 text-xs sm:text-sm md:text-base">
           <div className="flex flex-col cursor-pointer">
          {isOpen && (
             <>  
@@ -80,9 +88,9 @@ export default function UserMenu() {
                 <hr />
 
                  <MenuItem onClick={handleCreateNFT} label="Create NFT" />
-                 <hr/>
-                 <div className="lg:hidden p-1 flex items-center justify-center">
-                  <Button variant="connect" defaultConnectButton={true} primaryConnect />
+                 {/* <hr/> */}
+                 <div className="lg:hidden  flex items-center justify-center">
+                  <Button variant="connect" defaultConnectButton={true} primaryConnect  onClick={() => setIsOpen(false)}/>
 
                 </div>
               </>
@@ -90,6 +98,7 @@ export default function UserMenu() {
              
           </div>
         </div>
+        <Notifications  isOpen = {isNotificationOpen} />
     </>
   );
 }

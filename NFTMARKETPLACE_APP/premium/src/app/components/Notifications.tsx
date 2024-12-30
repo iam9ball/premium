@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import img1 from "@public/img1.jpeg"
+import image1 from "@public/image1.jpg"
 import Button from "./Button";
 
 interface Notification {
@@ -31,7 +31,7 @@ const initialNotifications: Notification[] = [
     id: 2,
     user: "Denise Selover",
     action: "made you an editor in the team Power.",
-    time: "Yesterday"
+    time: "2 days ago"
   },
   {
     id: 3,
@@ -47,7 +47,7 @@ const initialNotifications: Notification[] = [
     id: 4,
     user: "Denise Selover",
     action: "made you an editor in the team Power.",
-    time: "Yesterday"
+    time: "2 days ago"
   }
 ];
 
@@ -79,7 +79,7 @@ export default function Notification({isOpen}: NotificationProps) {
               <div className="flex justify-between items-center p-4">
                 <h2 className="md:text-lg text-[14px] text-grey-300 font-bold">Notifications</h2>
                 <button 
-                  className="text-blue-600 hover:text-blue-800 md:text-base text-xs"
+                  className="text-rose-500 hover:text-rose-900 md:text-base text-xs"
                   onClick={markAllAsRead}
                 >
                   Mark all as read
@@ -113,7 +113,7 @@ export default function Notification({isOpen}: NotificationProps) {
                   ) : (
                     <div className="flex space-x-2 items-center">
                       <Image
-                        src={img1}
+                        src={image1}
                         alt="alt"
                         height={20}
                         width={20}

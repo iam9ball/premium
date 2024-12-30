@@ -12,7 +12,7 @@ export default function Search() {
           className="w-full outline-none text-xs md:text-sm pl-1 ring-0 focus:ring-0 text-center rounded-full text-[#606060] border-transparent hover:border-[1px] hover:border-rose-500 focus:border-[1px] focus:border-rose-500 transition-colors font-inter placeholder:text-gray-500 placeholder:font-light"
         />
         <div className="p-1 bg-rose-500 rounded-full text-white hover:bg-white hover:text-rose-500 hover:border-rose-500">
-          <BiSearch size={14} />
+          <BiSearch size={15} />
         </div>
       </div>
     </div>

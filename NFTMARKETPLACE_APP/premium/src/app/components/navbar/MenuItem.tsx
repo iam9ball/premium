@@ -10,7 +10,7 @@ export default function MenuItem({
   return (
     <div
       onClick={onClick}
-      className="px-2 py-2 text-[10px] sm:text-xs md:text-sm hover:bg-neutral-100 transition font-semibold"
+      className="px-2 py-2 text-[12px] sm:text-xs md:text-sm hover:bg-neutral-100 transition font-semibold"
     >
       {label}
     </div>
