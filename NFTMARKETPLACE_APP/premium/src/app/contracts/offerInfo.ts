@@ -1,6 +1,5 @@
 import { contract } from './getContract';
 import { readContract } from 'thirdweb';
-import { ListingType } from './listing';
 
 
 

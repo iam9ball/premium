@@ -1,6 +1,6 @@
 'use client'
 import { useState, useCallback, useEffect } from "react";
-import Card from "./card/Card";
+import Card from "../components/card/Card";
 import { getContract } from "thirdweb";
 import { anvil } from "thirdweb/chains";
 import { client } from "../client";
@@ -8,6 +8,8 @@ import { fetchNFT, listings } from "../contracts/listingInfo";
 import { ipfsToHttp } from "../utils/ipfsToHttp";
 import useSWR from 'swr';
 import useCreateListingModal from "../hooks/useCreateListingModal";
+import EmptyState from "../components/EmptyState";
+import Error from "../components/Error";
 interface ListingData {
   src: string;
   name: string;
@@ -21,7 +23,7 @@ export default function Listings() {
  
   const fetchListings = useCallback(async() => {
     const listingsData = await listings();
-    if (!listingsData?.length) return [];
+    
     const results = await Promise.allSettled(
       listingsData.map(async (listing) => {
         try {
@@ -32,41 +34,35 @@ export default function Listings() {
           });
           const nft = await fetchNFT(contract, listing);
          
-          return {
-            src: ipfsToHttp(nft?.metadata.image!),
-            name: nft?.metadata.name!,
-            id: listing.tokenId.toString(),
-            price: listing.pricePerToken.toString(),
-            listingId: listing.listingId
-          };
+          return (
+          
+          <Card
+          key={listing.tokenId}
+          alt={nft?.metadata.name!}
+          id={listing.tokenId.toString()}
+          src={ipfsToHttp(nft?.metadata.image!)}
+          price={listing.pricePerToken.toString()}
+          listingId={listing.tokenId}
+          name={nft?.metadata.name!}
+         
+        />
+
+            // src: ipfsToHttp(nft?.metadata.image!),
+            // name: nft?.metadata.name!,
+            // id: listing.tokenId.toString(),
+            // price: listing.pricePerToken.toString(),
+            // listingId: listing.listingId
+          );
         } catch (err) {
-          return {
-            error: `Failed to fetch NFT ${listing.tokenId}`,
-            id: listing.tokenId.toString(),
-            listingId: listing.listingId,
-            name: "Error",
-            price: "0",
-            src: ""
-          };
+          console.error(err);
         }
       })
     );
-    return results.toReversed().map(listing => (
-      listing.status === 'fulfilled' && (
-        <Card
-          key={listing.value.id}
-          // {...listing}
-          alt={listing.value.name}
-          id={listing.value.id}
-          src={listing.value.src}
-          price={listing.value.price}
-          listingId={listing.value.listingId}
-          name={listing.value.name}
-         
-        />
-      )))
+    return results.toReversed()
   }, []);
-  const { data: listing, error, isLoading, mutate } = useSWR(
+
+
+  const { data: listing, error, mutate } = useSWR(
     'listings',
     fetchListings,
     {
@@ -78,8 +74,17 @@ export default function Listings() {
     createListingModal.setMutateListings(mutate);
   }, [mutate]);
 
-   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error fetching listings</div>;
-
-  return <>{listing}</>;
+  if (error) return <Error error={error}/>;
+  if (!listing?.length) return (
+                <EmptyState 
+                title="Oops!" 
+                subtitle="No listing at this moment. Try creating one" 
+                label="Create listing"
+                showButton
+                onClick={createListingModal.onOpen}
+                />
+              );
+  return (
+    <>{listing.map((item: any) => item)}</>
+  );
 }

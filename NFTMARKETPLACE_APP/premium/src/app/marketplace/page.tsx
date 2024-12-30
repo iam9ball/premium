@@ -2,7 +2,7 @@
 
 
 import CardContainer from "../components/card/CardContainer";
-import Listings from "../components/Listings";
+import Listings from "./Listings"
 
 
 

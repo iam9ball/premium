@@ -118,11 +118,11 @@ export const getPlatformFee = async (currency: string, price: bigint) => {
   }
     
 }
-export const getListingType = async (params: ListingType) => {
+export const getListingType = async (params: number) => {
   try {
       const data = await readContract({
      contract,
-     method:"getListingType",
+     method:"getListingTypeInfo",
      params:[params]
     })
 
@@ -131,6 +131,7 @@ export const getListingType = async (params: ListingType) => {
   catch (error) {
     console.error(error);
     throw error
+    
   }
     
 }

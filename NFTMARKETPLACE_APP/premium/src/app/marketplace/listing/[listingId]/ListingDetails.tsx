@@ -3,7 +3,7 @@ import Button from '@/app/components/Button';
 import Pulse from '@/app/components/Pulse';
 import { ipfsToHttp } from '@/app/utils/ipfsToHttp';
 import Image from 'next/image';
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react'
+import React, { useEffect, useMemo, useCallback } from 'react'
 import useDialog from '@/app/hooks/useDialog';
 import useBuyListingModal from '@/app/hooks/useBuyListingModal';
 import { fetchNFT, getListing } from '@/app/contracts/listingInfo';
@@ -11,8 +11,12 @@ import { getContract } from "thirdweb";
 import { anvil } from "thirdweb/chains";
 import { client } from "@/app/client";
 import useSWR from 'swr';
-import { NFT } from 'thirdweb/react';
 import useMakeOfferModal from '@/app/hooks/useMakeOfferModal';
+import Error from '@/app/components/Error';
+import EmptyState from '@/app/components/EmptyState';
+import useCreateListingModal from "@/app/hooks/useCreateListingModal";
+
+
 
 
 interface ListingDetailsProps {
@@ -26,6 +30,8 @@ export default function ListingDetails(
     const dialog = useDialog();
   const buyListingModal = useBuyListingModal();
   const makeOfferModal = useMakeOfferModal();
+    const createListingModal = useCreateListingModal();
+
 
 
    const fetchListing = useCallback(async () => {
@@ -35,14 +41,14 @@ export default function ListingDetails(
       const contract = getContract({
         client,
         chain: anvil,
-        address: listing.assetContract,
+        address: listing?.assetContract,
       });
 
       const nft = await fetchNFT(contract, listing);
 
       return {
         ...listing, 
-        nft: nft || null
+        nft: nft
       };
     } catch(error) {
       console.error('Error fetching listing:', error);
@@ -122,7 +128,11 @@ const rotationStyle = useMemo(() => {
   }, [data?.endTimestamp, data?.startTimestamp])
 
    const uri = useMemo(() => {
-    return ipfsToHttp(data?.nft.metadata.image!)
+    return data?.nft && ipfsToHttp(data?.nft.metadata.image!)
+
+  }, [data?.nft])
+   const alt = useMemo(() => {
+    return data?.nft && data?.nft.metadata.name!
 
   }, [data?.nft])
 
@@ -134,14 +144,18 @@ const rotationStyle = useMemo(() => {
 
   
   if(error) {
-    return <div>An error occured</div>
+    return <Error error={error}/>
   }
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
+  
 
   if (!data) {
-    return <div>Empty state</div>
+    return  <EmptyState 
+            title="Oops!" 
+            subtitle="No listing at this moment. Try creating one" 
+            label="Create listing"
+            showButton
+            onClick={createListingModal.onOpen}
+            />
   }
   
 
@@ -150,7 +164,7 @@ const rotationStyle = useMemo(() => {
     
 
     <>
-    <div className="w-full h-[90vh] aspect-[3/4] h-[80vh] cursor-pointer flex justify-evenly " onMouseEnter={handleMouseEnter}>
+    <div className="w-full  aspect-[3/4] h-[80vh] cursor-pointer flex justify-evenly " onMouseEnter={handleMouseEnter}>
       <div className="relative h-full w-[90%] group">
         {/* Background gradient animation */}
         <div
@@ -172,10 +186,8 @@ const rotationStyle = useMemo(() => {
         <div className="relative w-[40%] flex items-center h-[90%]">
           
             <Image 
-              src={uri} 
-              alt={
-               data?.nft.metadata.name!
-              } 
+              src={uri!} 
+              alt={alt!} 
               fill
               style={{ objectFit: 'contain' }}
               className="rounded-lg transition-transform duration-300 group-hover:scale-95"

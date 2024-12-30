@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import {showToast} from "../WalletToast";
 import { useRouter } from "next/navigation";
 import { NATIVE_TOKEN } from "@/app/utils/address";
+import { getListingType } from "@/app/contracts/listingInfo";
 
 // import { useListingFee, useListingInfo } from "../hooks/usePlatformInfo";
 
@@ -148,7 +149,18 @@ const CreateListingModal = () => {
     }, [setValue])
 
     
-      
+    const basic = useMemo(async ()=> {
+     const [duration, price] = await getListingType(LISTINGPLAN.BASIC);
+     return {duration, price}
+    }, [])  
+    const advanced = useMemo(async ()=> {
+     const [duration, price] = await getListingType(LISTINGPLAN.ADVANCED);
+     return {duration, price}
+    }, [])  
+    const pro = useMemo(async ()=> {
+     const [duration, price] = await getListingType(LISTINGPLAN.PRO);
+     return {duration, price}
+    }, [])  
 
   
      const handleToggle = (value: boolean) => {
@@ -235,23 +247,23 @@ const CreateListingModal = () => {
         <div className="flex w-full justify-evenly items-center ">
 
           <div className={`border border-gray-300 w-[30%] rounded-lg py-4 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.BASIC && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.BASIC)}}>
-             <Heading title="Basic" subtitle="$10" center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`} subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}/>
+             <Heading title="Basic" subtitle={`$${basic.then((result) => result.price.toString()) }`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`} subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}>
-                        1 month
+                        {basic.then((result) => result.duration.toString())}
               </div>
            </div>
 
            <div className={`border border-gray-300 w-[35%] rounded-lg py-5 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.ADVANCED && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.ADVANCED)}}>
-             <Heading title="Advanced" subtitle="$30" center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}/>
+             <Heading title="Advanced" subtitle={`$${advanced.then((result) => result.price.toString()) }`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}>
-                        3 months
+                         {advanced.then((result) => result.duration.toString())}
               </div>
            </div>
 
            <div className={`border border-gray-300 w-[30%] rounded-lg py-4 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.PRO && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.PRO)}}>
-             <Heading title="Pro" subtitle="$50" center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}/>
+             <Heading title="Pro" subtitle={`$${pro.then((result) => result.price.toString()) }`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}>
-                        5 months
+                        {pro.then((result) => result.duration.toString())}
               </div>
            </div>
             
