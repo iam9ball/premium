@@ -25,15 +25,15 @@ export default function EmptyState({
         title={title}
         subtitle={subtitle}
         center
-        titleClassName="text-rose-500"
-        subtitleClassName="text-rose-500"
+        titleClassName="text-rose-500 text-sm md:text-base lg:text-lg"
+        subtitleClassName="text-rose-500 text-sm md:text-base lg:text-lg"
         />
-        <div className="w-48 mt-4">
+        <div className="w-40 md:w-48 mt-4">
             {showButton && (
                 <Button
                 onClick = {() => onClick && onClick()} 
                 actionLabel={label}
-                classNames="w-[40%] bg-black text-black"
+                classNames="w-[90%] bg-black text-white text-xs md:text-sm py-2 rounded-md"
                 />
             )}
         </div>

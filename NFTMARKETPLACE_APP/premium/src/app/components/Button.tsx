@@ -80,7 +80,7 @@ export default function Button({
 
   const handleConnect = () => {
     console.log("Connecting...");
-    switchChain(polygonAmoy)
+    switchChain(anvil)
       .then(() => onClick && onClick())
       .catch((error) => console.error("Failed to switch chain:", error));
   };

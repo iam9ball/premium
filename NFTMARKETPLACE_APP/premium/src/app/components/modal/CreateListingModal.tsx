@@ -1,7 +1,7 @@
 'use client'
 import useCreateListingModal from "@/app/hooks/useCreateListingModal"
 import Modal from "./Modal";
-import { useCallback, useMemo, useState, useRef } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import Heading from "../Heading";
 import ToggleButton from "../ToggleButton";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -33,6 +33,11 @@ enum  STEPS {
   
 }
 
+interface ListingTypeData {
+    duration?: string;
+    price?: string;
+}
+
 const CreateListingModal = () => {
     const [isLoading, setIsLoading] = useState(false); 
     const createListingModal = useCreateListingModal();
@@ -53,7 +58,9 @@ const CreateListingModal = () => {
     mode: 'onSubmit',
     reValidateMode: "onSubmit"
   });
-  //  const router = useRouter();
+    const [basicData, setBasicData] = useState<ListingTypeData>({});
+  const [advancedData, setAdvancedData] = useState<ListingTypeData>({});
+  const [proData, setProData] = useState<ListingTypeData>({});
 
     const onBack = () => {
         setStep((value) => value - 1 )
@@ -149,18 +156,25 @@ const CreateListingModal = () => {
     }, [setValue])
 
     
-    const basic = useMemo(async ()=> {
-     const [duration, price] = await getListingType(LISTINGPLAN.BASIC);
-     return {duration, price}
-    }, [])  
-    const advanced = useMemo(async ()=> {
-     const [duration, price] = await getListingType(LISTINGPLAN.ADVANCED);
-     return {duration, price}
-    }, [])  
-    const pro = useMemo(async ()=> {
-     const [duration, price] = await getListingType(LISTINGPLAN.PRO);
-     return {duration, price}
-    }, [])  
+    useEffect(() => {
+    const fetchListingData = async () => {
+        try {
+            const [basicResult, advancedResult, proResult] = await Promise.all([
+                getListingType(LISTINGPLAN.BASIC),
+                getListingType(LISTINGPLAN.ADVANCED),
+                getListingType(LISTINGPLAN.PRO)
+            ]);
+            // Set the state with the fetched data
+            setBasicData({ duration: basicResult?.[0].toString(), price: basicResult?.[1].toString() });
+            setAdvancedData({ duration: advancedResult?.[0].toString(), price: advancedResult?.[1].toString() });
+            setProData({ duration: proResult?.[0].toString(), price: proResult?.[1].toString() });
+        } catch (error) {
+            console.error('Error fetching listing data:', error);
+        }
+    };
+
+    fetchListingData();
+}, []);
 
   
      const handleToggle = (value: boolean) => {
@@ -247,23 +261,23 @@ const CreateListingModal = () => {
         <div className="flex w-full justify-evenly items-center ">
 
           <div className={`border border-gray-300 w-[30%] rounded-lg py-4 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.BASIC && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.BASIC)}}>
-             <Heading title="Basic" subtitle={`$${basic.then((result) => result.price.toString()) }`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`} subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}/>
+             <Heading title="Basic" subtitle={`$${basicData.price}`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`} subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}>
-                        {basic.then((result) => result.duration.toString())}
+                        {basicData.duration}
               </div>
            </div>
 
            <div className={`border border-gray-300 w-[35%] rounded-lg py-5 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.ADVANCED && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.ADVANCED)}}>
-             <Heading title="Advanced" subtitle={`$${advanced.then((result) => result.price.toString()) }`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}/>
+             <Heading title="Advanced" subtitle={`$${advancedData.price}`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}>
-                         {advanced.then((result) => result.duration.toString())}
+                         {advancedData.duration}
               </div>
            </div>
 
            <div className={`border border-gray-300 w-[30%] rounded-lg py-4 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.PRO && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.PRO)}}>
-             <Heading title="Pro" subtitle={`$${pro.then((result) => result.price.toString()) }`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}/>
+             <Heading title="Pro" subtitle={`$${proData.price}`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}>
-                        {pro.then((result) => result.duration.toString())}
+                        {proData.duration}
               </div>
            </div>
             

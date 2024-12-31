@@ -10,6 +10,8 @@ import useSWR from 'swr';
 import useCreateListingModal from "../hooks/useCreateListingModal";
 import EmptyState from "../components/EmptyState";
 import Error from "../components/Error";
+import CardContainer from "../components/card/CardContainer";
+
 interface ListingData {
   src: string;
   name: string;
@@ -18,49 +20,71 @@ interface ListingData {
   listingId: string;
   error?: string;
 }
+
 export default function Listings() {
   const createListingModal = useCreateListingModal();
  
-  const fetchListings = useCallback(async() => {
-    const listingsData = await listings();
-    
-    const results = await Promise.allSettled(
-      listingsData.map(async (listing) => {
-        try {
-          const contract = getContract({
-            client,
-            chain: anvil,
-            address: listing.assetContract,
-          });
-          const nft = await fetchNFT(contract, listing);
-         
-          return (
-          
+  const fetchListings = useCallback(async () => {
+    try {
+      const listingsData = await listings();
+      if (!listingsData || listingsData?.length == 0) {
+        return [];
+      }
+   
+      const results = await Promise.allSettled(
+        listingsData.map(async (listing) => {
+          try {
+            const contract = getContract({
+              client,
+              chain: anvil,
+              address: listing.assetContract,
+            });
+            const nft = await fetchNFT(contract, listing);
+           
+            return {
+              status: 'fulfilled',
+              value: {
+                src: ipfsToHttp(nft?.metadata.image!),
+                name: nft?.metadata.name!,
+                id: listing.tokenId.toString(),
+                price: listing.pricePerToken.toString(),
+                listingId: listing.tokenId
+              } 
+            };
+          } catch (error) {
+            return {
+              status: 'rejected',
+              reason: error
+            };
+          }
+        })
+      );
+
+      // Filter out rejected promises and map successful results to Card components
+      const validResults = results
+        .filter((result) => 
+          result.status === 'fulfilled')
+        .map(result => (
           <Card
-          key={listing.tokenId}
-          alt={nft?.metadata.name!}
-          id={listing.tokenId.toString()}
-          src={ipfsToHttp(nft?.metadata.image!)}
-          price={listing.pricePerToken.toString()}
-          listingId={listing.tokenId}
-          name={nft?.metadata.name!}
-         
-        />
+            key={result.value?.value?.id}
+            alt={result.value?.value?.name!}
+            id={result.value?.value?.id!}
+            src={result.value?.value?.src!}
+            price={result.value?.value?.price!}
+            listingId={result.value?.value?.listingId!}
+            name={result.value?.value?.name!}
+          />
+        ));
 
-            // src: ipfsToHttp(nft?.metadata.image!),
-            // name: nft?.metadata.name!,
-            // id: listing.tokenId.toString(),
-            // price: listing.pricePerToken.toString(),
-            // listingId: listing.listingId
-          );
-        } catch (err) {
-          console.error(err);
-        }
-      })
-    );
-    return results.toReversed()
+      return validResults.reverse();
+    } catch (err) {
+     console.error(`Failed to fetch NFT for listing ${listing.tokenId}:`, error);
+            return {
+              status: 'rejected',
+              reason: error
+            };
+    }
   }, []);
-
 
   const { data: listing, error, mutate } = useSWR(
     'listings',
@@ -70,21 +94,27 @@ export default function Listings() {
       revalidateOnReconnect: true,
     }
   );
+
+  console.log(listing)
   useEffect(() => {
     createListingModal.setMutateListings(mutate);
   }, [mutate]);
 
   if (error) return <Error error={error}/>;
-  if (!listing?.length) return (
-                <EmptyState 
-                title="Oops!" 
-                subtitle="No listing at this moment. Try creating one" 
-                label="Create listing"
-                showButton
-                onClick={createListingModal.onOpen}
-                />
-              );
+  
+  if (listing?.length == 0) return (
+    <EmptyState
+      title="Oops!"
+      subtitle="No listing at the moment. Try creating one"
+      label="Create listing"
+      showButton
+      onClick={createListingModal.onOpen}
+    />
+  );
+
   return (
-    <>{listing.map((item: any) => item)}</>
+    <CardContainer>
+      {listing}
+    </CardContainer>
   );
 }

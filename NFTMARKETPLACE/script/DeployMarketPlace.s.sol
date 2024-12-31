@@ -42,11 +42,14 @@ contract Marketplace is Script {
                 router,
                 abi.encodeCall(
                     MarketplaceRouter.initialize,
-                    (manager, new address[](0),IDirectListings.ListingType.BASIC, 10 days, 10, NATIVE_TOKEN, pricefeed)
+                    (manager, new address[](0),IDirectListings.ListingType.BASIC, 30 days, 20, NATIVE_TOKEN, pricefeed)
                 )
             )
         );
+        MarketplaceRouter(payable(proxy)).setListingPlan(IDirectListings.ListingType.ADVANCED, 60 days, 30);
+       MarketplaceRouter(payable(proxy)).setListingPlan(IDirectListings.ListingType.PRO, 90 days, 60);
        vm.stopBroadcast();
+       
         return (payable(proxy), manager);
     }
 

@@ -73,13 +73,13 @@ export default function Notification({isOpen}: NotificationProps) {
     <div className="absolute md:w-[300px] w-[230px] mx-auto shadow-md sm:right-14 md:right-16 right-6 top-20 z-30">
       {isOpen && (
         <div className="bg-white shadow-lg rounded-lg relative">
-          <div className="max-h-[14rem] overflow-y-auto">
+          <div className="max-h-[215px] overflow-y-auto">
             {/* Header - will stick to top */}
             <div className="sticky top-0 z-10 bg-white border-b">
               <div className="flex justify-between items-center p-4">
                 <h2 className="md:text-lg text-[14px] text-grey-300 font-bold">Notifications</h2>
                 <button 
-                  className="text-rose-500 hover:text-rose-900 md:text-base text-xs"
+                  className="text-rose-500 hover:text-rose-600 md:text-base text-xs"
                   onClick={markAllAsRead}
                 >
                   Mark all as read

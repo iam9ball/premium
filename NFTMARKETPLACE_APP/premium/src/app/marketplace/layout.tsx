@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import NavBar from "../components/navbar/NavBar";
+import { Suspense } from "react";
 
 
 
@@ -22,11 +23,11 @@ export default function Layout({
 }>) {
   return (
    
-         <>
+       <Suspense>  
       <header>
       <NavBar/>
      </header>
      { children}
-       </>
+     </Suspense>
   );
 }

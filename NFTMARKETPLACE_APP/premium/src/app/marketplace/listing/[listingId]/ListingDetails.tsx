@@ -41,7 +41,7 @@ export default function ListingDetails(
       const contract = getContract({
         client,
         chain: anvil,
-        address: listing?.assetContract,
+        address: listing?.assetContract!,
       });
 
       const nft = await fetchNFT(contract, listing);
@@ -212,7 +212,7 @@ const rotationStyle = useMemo(() => {
 
                     <div className="font-semibold text-white text-3xl">
                       <div className="capitalize tracking-wide mb-6">
-                        {data?.nft!.metadata.name} <span className=''>#{data?.tokenId.toString()}</span>
+                        {data?.nft!.metadata.name} <span className=''>#{data?.tokenId?.toString()}</span>
                       </div>
                     </div> 
                     
@@ -225,7 +225,7 @@ const rotationStyle = useMemo(() => {
                     <div className="font-semibold  text-xl tracking-wide mb-6">
                       <span className='text-gray-300'> Price: {" "}</span>
                       <span className="capitalize text-white">
-                      {data?.pricePerToken.toString()}
+                      {data?.pricePerToken?.toString()}
                       </span>
                     </div> 
                     { data?.reserved && <div className="font-semibold mb-6">
@@ -262,7 +262,7 @@ const rotationStyle = useMemo(() => {
                 <div className='w-full border-gray-400 border-b-2 text-center text-xl'>Details</div>
                 <div className="w-full h-full flex-col items-stretch">
                   <div className='w-full h-[25%] border-gray-400 border-b-2 '>Asset Contract: <span className='text-sm'>{data?.assetContract}</span></div>
-                  <div className='w-full h-[25%] border-gray-400 border-b-2 '>Asset Id: <span className='text-sm'>#{data?.tokenId.toString()}</span> </div>
+                  <div className='w-full h-[25%] border-gray-400 border-b-2 '>Asset Id: <span className='text-sm'>#{data?.tokenId?.toString()}</span> </div>
                   <div className='w-full h-[25%] border-gray-400 border-b-2 '>Asset Standard: <span className='text-sm'>{tokenType}</span></div>
                   <div className='w-full h-[25%]'>Royalty: <span className='text-sm'>10%</span></div>
                 </div>
