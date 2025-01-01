@@ -7,7 +7,7 @@ interface ContainerProps {
 export default function Container ({children}: ContainerProps) {
     return (
         <main>
-        <div className="px-6 py-4">
+        <div className="px-2 py-2">
             {children}
         </div>
         </main>

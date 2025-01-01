@@ -37,7 +37,7 @@ export enum ListingType {
    let fee: bigint | undefined ;
    if (currencyAddress == NATIVE_TOKEN){
    
-      fee = await listingFee(currencyAddress, data?.[1])
+      fee = await listingFee(currencyAddress, data?.[1]!)
      
          console.log(fee);
        

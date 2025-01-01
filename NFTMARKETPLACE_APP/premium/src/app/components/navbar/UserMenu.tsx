@@ -69,7 +69,7 @@ export default function UserMenu() {
           </div> 
       </div>
       {isOpen && (
-        <div className="absolute rounded-md z-30 shadow-md w-3/7 sm:w-1/4 md:w-[20%] border-gray-200 overflow-hidden right-2 top-20 text-xs sm:text-sm md:text-base">
+        <div className="absolute rounded-md z-50 shadow-md w-3/7 sm:w-1/4 md:w-[20%] border-gray-200 overflow-hidden right-2 top-20 text-xs sm:text-sm md:text-base">
           <div className="flex flex-col cursor-pointer">
          
             <>  

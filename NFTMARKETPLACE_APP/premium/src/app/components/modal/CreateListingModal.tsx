@@ -15,6 +15,7 @@ import {showToast} from "../WalletToast";
 import { useRouter } from "next/navigation";
 import { NATIVE_TOKEN } from "@/app/utils/address";
 import { getListingType } from "@/app/contracts/listingInfo";
+import { TimeHelper } from "@/app/utils/timeFormatter";
 
 // import { useListingFee, useListingInfo } from "../hooks/usePlatformInfo";
 
@@ -34,7 +35,7 @@ enum  STEPS {
 }
 
 interface ListingTypeData {
-    duration?: string;
+    duration?: number;
     price?: string;
 }
 
@@ -165,9 +166,9 @@ const CreateListingModal = () => {
                 getListingType(LISTINGPLAN.PRO)
             ]);
             // Set the state with the fetched data
-            setBasicData({ duration: basicResult?.[0].toString(), price: basicResult?.[1].toString() });
-            setAdvancedData({ duration: advancedResult?.[0].toString(), price: advancedResult?.[1].toString() });
-            setProData({ duration: proResult?.[0].toString(), price: proResult?.[1].toString() });
+            setBasicData({ duration:  TimeHelper.secondsToMonths(Number(basicResult?.[0]!)), price: basicResult?.[1].toString() });
+            setAdvancedData({ duration: TimeHelper.secondsToMonths(Number(advancedResult?.[0]!)), price: advancedResult?.[1].toString() });
+            setProData({ duration: TimeHelper.secondsToMonths(Number(proResult?.[0]!)), price: proResult?.[1].toString() });
         } catch (error) {
             console.error('Error fetching listing data:', error);
         }
@@ -263,21 +264,21 @@ const CreateListingModal = () => {
           <div className={`border border-gray-300 w-[30%] rounded-lg py-4 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.BASIC && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.BASIC)}}>
              <Heading title="Basic" subtitle={`$${basicData.price}`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`} subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.BASIC && ("text-white")}`}>
-                        {basicData.duration}
+                        {TimeHelper.formatDuration(basicData.duration!)}
               </div>
            </div>
 
            <div className={`border border-gray-300 w-[35%] rounded-lg py-5 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.ADVANCED && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.ADVANCED)}}>
              <Heading title="Advanced" subtitle={`$${advancedData.price}`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.ADVANCED && ("text-white")}`}>
-                         {advancedData.duration}
+                         {TimeHelper.formatDuration(advancedData.duration!)}
               </div>
            </div>
 
            <div className={`border border-gray-300 w-[30%] rounded-lg py-4 px-2 cursor-pointer ${listingPlan == LISTINGPLAN.PRO && ("bg-black text-white")}`} onClick={() => { handleListingPlan(LISTINGPLAN.PRO)}}>
              <Heading title="Pro" subtitle={`$${proData.price}`} center titleClassName={`md:text-xl font-bold ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}  subtitleClassName={`text-xs md:text-base font-light mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}/>
               <div className={`flex items-center justify-center font-semibold text-xs md:text-lg mt-1 ${listingPlan == LISTINGPLAN.PRO && ("text-white")}`}>
-                        {proData.duration}
+                        {TimeHelper.formatDuration(proData?.duration!)}
               </div>
            </div>
             

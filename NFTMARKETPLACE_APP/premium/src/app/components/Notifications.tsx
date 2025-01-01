@@ -70,7 +70,7 @@ export default function Notification({isOpen}: NotificationProps) {
   
 
  return (
-    <div className="absolute md:w-[300px] w-[230px] mx-auto shadow-md sm:right-14 md:right-16 right-6 top-20 z-30">
+    <div className="absolute md:w-[300px] w-[230px] mx-auto shadow-md sm:right-14 md:right-16 right-6 top-20 z-50">
       {isOpen && (
         <div className="bg-white shadow-lg rounded-lg relative">
           <div className="max-h-[215px] overflow-y-auto">

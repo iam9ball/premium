@@ -3,6 +3,7 @@ import Image from "next/image"
 import premium from "@public/premium.jpeg"
 import {useWindowWidth} from "@react-hook/window-size";
 import { useMemo } from "react";
+import Link from "next/link";
 
 export default function Logo() {
 
@@ -23,6 +24,7 @@ export default function Logo() {
   }, [width])
 
   return (
+    <Link href={"/"}>
     <div className="inline-flex items-center justify-center">
       <div className="flex items-center h-10 sm:h-12 sm:w-28 md:w-36 lg:w-40">
         <Image 
@@ -36,5 +38,6 @@ export default function Logo() {
        
       </div>
     </div>
+    </Link>
   )
 }

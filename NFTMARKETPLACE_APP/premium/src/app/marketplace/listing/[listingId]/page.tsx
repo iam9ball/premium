@@ -42,8 +42,7 @@ export default async function ListingPage({ params }: { params: IParams }) {
      
      
     <>
-    <div className="h-[5vh]"></div>
-     <section>
+     <section className="min-h-[100vh]">
       <Container>
        <ListingDetails listingId={params.listingId}/>
        </Container>

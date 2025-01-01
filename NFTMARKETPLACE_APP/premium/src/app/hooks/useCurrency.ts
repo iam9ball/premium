@@ -4,19 +4,10 @@ import { contract } from '../contracts/getContract';
 import { readContract, ZERO_ADDRESS } from 'thirdweb';
 
 import useSWR from 'swr';
+import { fetchCurrencyInfo } from '../utils/currency';
 
 
-const fetchCurrencyInfo = async (contractAddress: string) => {
-    const response = await fetch(`https://api.coingecko.com/api/v3/coins/ethereum/contract/${contractAddress}`);
-    
-          if (!response.ok) {
-            throw new Error(`Failed to fetch token info for ${contractAddress}`);
-          }
 
-          const data = await response.json();
-          console.log('Fetched token info:', data); // Logging fetched data
-          return data;
-        }
 
 
 export const useCurrency = () => {

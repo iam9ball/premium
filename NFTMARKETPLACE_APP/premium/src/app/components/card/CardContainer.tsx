@@ -1,14 +1,24 @@
-
 interface CardContainerProps {
-    children: React.ReactNode;
-    className?: string;
+  children: React.ReactNode;
+  className?: string;
 }
 
-const CardContainer = ({children, className = ""}: CardContainerProps) => {
+export const CardContainer = ({ children, className = "" }: CardContainerProps) => {
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 w-[80%] max-w-[2000px] mx-auto ${className}`}>
-      {children}
+    <div className="w-full min-h-screen py-4 px-14">
+      <div className={`
+        grid
+        grid-cols-1
+        sm:grid-cols-2
+        md:grid-cols-3
+        lg:grid-cols-4
+        2xl:grid-cols-4
+        gap-6
+        mx-auto
+        ${className}
+      `}>
+        {children}
+      </div>
     </div>
-  )
-}
-export default CardContainer; 
+  );
+};

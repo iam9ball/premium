@@ -104,8 +104,8 @@ const formattedTimeStamp = (time: DateType, date: DateType) => {
   const bodyContent = (
     <div className="flex flex-col gap-7">
       <Heading
-        title="Make an offer"
-        subtitle="Make a reasonable amount and duration for this offer"
+        title="Make a reasonable amount and duration for this offer"
+        titleClassName="text-sm md:text-base"
       />
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">

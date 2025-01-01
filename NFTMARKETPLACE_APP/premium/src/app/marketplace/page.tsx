@@ -11,8 +11,7 @@ export default  function Marketplace() {
    
     <>
    
-     <div className="h-20"></div>
-     <section className="h-[90vh]">
+     <section>
       
       <Listings/>
      </section> 
