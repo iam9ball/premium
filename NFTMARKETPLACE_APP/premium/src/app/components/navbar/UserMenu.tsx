@@ -5,6 +5,7 @@ import MenuItem from "./MenuItem";
 import Button from "../Button";
 import useCreateNftModal from "@/app/hooks/useCreateNftModal";
 import useCreateListingModal from "@/app/hooks/useCreateListingModal";
+import useCreateAuctionModal from "@/app/hooks/useCreateAuctionModal";
 import Notifications from "../Notifications"
 
 
@@ -14,6 +15,7 @@ export default function UserMenu() {
   const [isNotificationOpen, setNotificationisOpen] = useState(false);
   const createNftModal = useCreateNftModal();
   const createListingModal = useCreateListingModal();
+  const createAuctionModal = useCreateAuctionModal();
 
   
 
@@ -40,6 +42,7 @@ export default function UserMenu() {
   }, []);
   const handleCreateAuctions = useCallback(() => {
     setIsOpen(false);
+    createAuctionModal.onOpen();
   }, []);
 
   const toggleNotifications = useCallback(() => {

@@ -5,6 +5,7 @@ import { ThirdwebProvider } from "thirdweb/react";
 import Footer from "./components/Footer";
 import CreateNftModal from "./components/modal/CreateNftModal";
 import CreateListingModal from "./components/modal/CreateListingModal";
+import CreateAuctionModal from "./components/modal/CreateAuctionModal";
 
 import WalletToast from "./components/WalletToast";
 import Dialog from "./components/modal/Dialog";
@@ -38,6 +39,7 @@ export default function RootLayout({
         {children}
         <CreateNftModal/>
         <CreateListingModal/>
+        <CreateAuctionModal/>
          <Dialog body="Who are you buying this art for? if yourself, 'Click yes'."/>
       <BuyListingModal/>
       <MakeOfferModal/>
